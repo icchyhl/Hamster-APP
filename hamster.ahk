@@ -1,5 +1,3 @@
-Collection of Hot Keys Used
-
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
@@ -14,6 +12,7 @@ Key Mappings
 > Windows + Capslock for actual capslock
 
 Hot Keys
+> printscreen + s = snippet tool
 > printscreen + m = new outlook email
 > printscreen + g = google
 > printscreen + n = notepad
@@ -28,11 +27,11 @@ Hot Keys
 
 printscreen & F8::
 {
-loop
-{
-send a
-sleep 1000
-}
+	loop
+	{
+	send a
+	sleep 1000
+	}
 printscreen & F9:: pause
 printscreen & F10:: Reload
 }
@@ -46,16 +45,28 @@ $`:: Send {backspace} ;change tilde to backspace
 $!`:: Send `` ;add alt+tilde to tilde
 PrintScreen & g:: Run, http://www.google.com/search?q ;% ;this runs google
 
-!v::
+!v:: 
 {
-Clipboard = %Clipboard%
-ClipSaved := ClipboardAll
-SendInput, ^v
-Sleep, 250
-Clipboard := ClipSaved
+Clipboard = %Clipboard% 
+ClipSaved := ClipboardAll 
+SendInput, ^v 
+Sleep, 250 
+Clipboard := ClipSaved 
 }
 return
 
+PrintScreen & s:: ;runs snipping tool
+Run, "C:\Windows\Sysnative\SnippingTool.exe"
+sleep 10
+WinWaitActive, Snipping Tool, , 1
+if ErrorLevel
+{
+    sleep 10
+    return
+}
+else
+    send ^n
+return
 PrintScreen & n:: ;runs note pad
 Run, Notepad
 return
@@ -65,78 +76,81 @@ return
 
 Capslock:: ;set capslock to NULL key, activate by windows + capslock
 If GetKeyState("LWin")
-  Send {Capslock}
+   Send {Capslock}
 else
-  Send {Shift}
+   Send {Shift}
 Return
 
 PrintScreen & /::
 If NOT IsWindow(WinExist("A"))
-  Return
+   Return
 If GetKeyState("shift")
-  Winset, Transparent, OFF, A
+   Winset, Transparent, OFF, A
 else
-  Winset, Transparent, 128, A
+   Winset, Transparent, 128, A
 Return
+
 
 PrintScreen & .::
 If NOT IsWindow(WinExist("A"))
-  Return
+   Return
 WinGetTitle, TempText, A
 If GetKeyState("shift")
 {
-  WinSet AlwaysOnTop, Off, A
-  If (SubStr(TempText, 1, 2) = "† ")
-  TempText := SubStr(TempText, 3)
+   WinSet AlwaysOnTop, Off, A
+   If (SubStr(TempText, 1, 2) = "† ")
+      TempText := SubStr(TempText, 3)
 }
 else
 {
-  WinSet AlwaysOnTop, On, A
-  If (SubStr(TempText, 1, 2) != "† ")
-  TempText := "† " . TempText ;chr(134)
+   WinSet AlwaysOnTop, On, A
+   If (SubStr(TempText, 1, 2) != "† ")
+      TempText := "† " . TempText ;chr(134)
 }
 WinSetTitle, A, , %TempText%
 Return
 
+
 ;This checks if a window is, in fact a window.
 ;As opposed to the desktop or a menu, etc.
-IsWindow(hwnd)
+IsWindow(hwnd) 
 {
-  WinGet, s, Style, ahk_id %hwnd%
-  return s & 0xC00000 ? (s & 0x80000000 ? 0 : 1) : 0
-  ;WS_CAPTION AND !WS_POPUP(for tooltips etc)
+   WinGet, s, Style, ahk_id %hwnd% 
+   return s & 0xC00000 ? (s & 0x80000000 ? 0 : 1) : 0
+   ;WS_CAPTION AND !WS_POPUP(for tooltips etc) 
 }
 
+
 Alt & LButton:: ;this is to use ALT + left mouse click to move a window position
-CoordMode, Mouse ; Switch to screen/absolute coordinates.
+CoordMode, Mouse  ; Switch to screen/absolute coordinates.
 MouseGetPos, EWD_MouseStartX, EWD_MouseStartY, EWD_MouseWin
 WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY,,, ahk_id %EWD_MouseWin%
-WinGet, EWD_WinState, MinMax, ahk_id %EWD_MouseWin%
-if EWD_WinState = 0 ; Only if the window isn't maximized
-  SetTimer, EWD_WatchMouse, 10 ; Track the mouse as the user drags it.
+WinGet, EWD_WinState, MinMax, ahk_id %EWD_MouseWin% 
+if EWD_WinState = 0  ; Only if the window isn't maximized 
+    SetTimer, EWD_WatchMouse, 10 ; Track the mouse as the user drags it.
 return
 
 EWD_WatchMouse:
 GetKeyState, EWD_LButtonState, LButton, P
-if EWD_LButtonState = U ; Button has been released, so drag is complete.
+if EWD_LButtonState = U  ; Button has been released, so drag is complete.
 {
-  SetTimer, EWD_WatchMouse, off
-  return
+    SetTimer, EWD_WatchMouse, off
+    return
 }
 GetKeyState, EWD_EscapeState, Escape, P
-if EWD_EscapeState = D ; Escape has been pressed, so drag is cancelled.
+if EWD_EscapeState = D  ; Escape has been pressed, so drag is cancelled.
 {
-  SetTimer, EWD_WatchMouse, off
-  WinMove, ahk_id %EWD_MouseWin%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
-  return
+    SetTimer, EWD_WatchMouse, off
+    WinMove, ahk_id %EWD_MouseWin%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
+    return
 }
 ; Otherwise, reposition the window to match the change in mouse coordinates
 ; caused by the user having dragged the mouse:
 CoordMode, Mouse
 MouseGetPos, EWD_MouseX, EWD_MouseY
 WinGetPos, EWD_WinX, EWD_WinY,,, ahk_id %EWD_MouseWin%
-SetWinDelay, -1 ; Makes the below move faster/smoother.
+SetWinDelay, -1   ; Makes the below move faster/smoother.
 WinMove, ahk_id %EWD_MouseWin%,, EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY
-EWD_MouseStartX := EWD_MouseX ; Update for the next timer-call to this subroutine.
+EWD_MouseStartX := EWD_MouseX  ; Update for the next timer-call to this subroutine.
 EWD_MouseStartY := EWD_MouseY
 return
