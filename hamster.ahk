@@ -75,7 +75,7 @@ PrintScreen & c:: ;runs calculator
 Run calc.exe
 return
 PrintScreen & e:: ;runs calculator
-Run excel.exe /e
+Run excel.exe /embedded
 return
 
 Capslock:: ;set capslock to NULL key, activate by windows + capslock
