@@ -15,6 +15,7 @@ Hot Keys
 > printscreen + s = snippet tool
 > printscreen + m = new outlook email
 > printscreen + g = google
+> printscreen + e = Excel
 > printscreen + n = notepad
 > printscreen + c = calculator
 > alt + v = paste values in clipboard without copied formatting
@@ -72,6 +73,9 @@ Run, Notepad
 return
 PrintScreen & c:: ;runs calculator
 Run calc.exe
+return
+PrintScreen & e:: ;runs calculator
+Run excel.exe
 return
 
 Capslock:: ;set capslock to NULL key, activate by windows + capslock
